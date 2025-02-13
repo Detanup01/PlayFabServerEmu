@@ -6,6 +6,10 @@ using PlayFab.ClientModels;
 using PlayFab.Internal;
 using ModdableWebServer.Helper;
 using PlayFab;
+using PlayFabEmuCore.BackEnd;
+using PlayFabEmuCore.Helpers;
+using PlayFabEmuCore.Models;
+using PlayFabEmuCore.Extensions;
 
 namespace PlayFabEmuCore.Client;
 
@@ -54,6 +58,37 @@ internal class Login
     public static bool LoginWithSteam(HttpRequest req, ServerStruct serverStruct)
     {
         var steam = JsonConvert.DeserializeObject<LoginWithSteamRequest>(req.Body);
+        if (steam == null)
+        {
+            serverStruct.Response.MakeGetResponse(JsonConvert.SerializeObject(new PlayFabError()
+            {
+                HttpCode = 400,
+                Error = PlayFabErrorCode.JsonParseError,
+                ErrorMessage = "Json Parse Error",
+                HttpStatus = "BadRequest",
+            }));
+            serverStruct.SendResponse();
+            return true;
+        }
+
+        var ticket = AppTickets.GetTicket(Convert.FromHexString(steam.SteamTicket));
+        var steam_id = ticket.SteamID.ToString();
+
+        var user = DBManager.FabUser.GetOne(x=>x.TitleId == steam.TitleId && x.PlatformId == steam_id && x.PlatformType == "Steam");
+        if (user == null)
+        {
+            // if no user found create one.
+            DBManager.FabUser.Create(user = new()
+            { 
+                PlayFabId = FabId.RandomId,
+                GameId = FabId.RandomId,
+                PlatformId = steam_id,
+                PlatformType = "Steam",
+                RandomId = FabId.RandomId,
+                TitleAccountId = FabId.RandomId,
+                TitleId = steam.TitleId
+            });
+        }
 
         var ret = new PlayFabJsonSuccess<LoginResult>()
         {
@@ -63,11 +98,13 @@ internal class Login
                 {
                     Entity = new()
                     {
-                        Id = "CUSTOMID",
+                        Id = user.TitleAccountId,
                         Type = "title_player_account"
-                    }
+                    },
+                    EntityToken = user.CreateEntityToken(),
+                    TokenExpiration = DateTime.Now
                 },
-                SessionTicket = "",
+                SessionTicket = user.GenerateSessionTicket(),
                 SettingsForUser = new()
                 {
                     NeedsAttribution = false,
@@ -81,7 +118,7 @@ internal class Login
                     Variants = [],
                 },
                 NewlyCreated = false,
-                PlayFabId = "s"
+                PlayFabId = user.PlayFabId
             },
             code = 200,
             status = "OK"
