@@ -1,0 +1,33 @@
+[ req ]
+default_md = sha256
+prompt = no
+req_extensions = req_ext
+distinguished_name = req_distinguished_name
+[ req_distinguished_name ]
+commonName = mainp-01-alpha-4-C.mainp.azureplayfab.com
+countryName = US
+stateOrProvinceName = WA
+localityName = Redmond
+organizationName = Microsoft Corporation
+[ req_ext ]
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=critical,serverAuth,clientAuth
+subjectAltName = @alt_names
+[ alt_names ]
+DNS.0 = *.csint.mainp.azureplayfab.com
+DNS.1 = *.api.mainp.azureplayfab.com
+DNS.2 = *.portal.mainp.azureplayfab.com
+DNS.3 = portal.mainp.azureplayfab.com
+DNS.4 = insightsproxy.mainp.azureplayfab.com
+DNS.5 = *.logicserver.mainp.azureplayfab.com
+DNS.6 = player.mainp.azureplayfab.com
+DNS.7 = *.playstream.mainp.azureplayfab.com
+DNS.8 = playstream.mainp.azureplayfab.com
+DNS.9 = legacymatch.mainp.azureplayfab.com
+DNS.10 = *.playfabapi.com
+DNS.11 = developer.playfab.com
+DNS.12 = *.playfablogic.com
+DNS.13 = insights.playfab.com
+DNS.14 = mainp-01-alpha-4-C.mainp.azureplayfab.com
+DNS.15 = localhost
+DNS.16 = 127.0.0.1
