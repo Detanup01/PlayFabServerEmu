@@ -5,11 +5,11 @@ namespace PlayFabEmuCore.Models;
 public struct FabId : IEquatable<FabId>, IEqualityComparer<FabId>
 {
     public static FabId Empty => new FabId(0);
-    public static FabId RandomId => new FabId(Random.Shared.NextInt64());
+    public static FabId RandomId { get => new FabId(Random.Shared.NextInt64()); }    
+    public string StringId { get; private set; }
 
-    public string StringId;
-
-    public long LongId;
+    [LiteDB.BsonIgnore]
+    public long LongId { get; private set; }
 
     public FabId()
     {
@@ -62,11 +62,6 @@ public struct FabId : IEquatable<FabId>, IEqualityComparer<FabId>
         return obj.GetHashCode();
     }
 
-    public static implicit operator long(FabId fabId)
-    {
-        return fabId.LongId;
-    }
-
     public static implicit operator string(FabId fabId)
     {
         return fabId.StringId;
@@ -82,5 +77,13 @@ public struct FabId : IEquatable<FabId>, IEqualityComparer<FabId>
         return new(fabId);
     }
 
+    public static bool operator ==(FabId x, FabId y)
+    {
+        return x.Equals(y);
+    }
 
+    public static bool operator !=(FabId x, FabId y)
+    {
+        return !x.Equals(y);
+    }
 }

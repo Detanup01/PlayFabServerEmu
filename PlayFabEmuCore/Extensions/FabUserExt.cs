@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PlayFabEmuCore.Models;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace PlayFabEmuCore.Extensions;
 
@@ -19,6 +20,11 @@ internal static class FabUserExt
     public static string CreateEntityToken(this FabUser user)
     {
         return $"4!{RandomNumberGenerator.GetString("0123456789qwertzuiopasdfghjklyxcvbnm", 44)}|{JsonConvert.SerializeObject(user.CreateFabEntityToken())}";
+    }
+
+    public static string CreateSerializedEntityToken(this FabUser user)
+    {
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(user.CreateEntityToken()));
     }
 
     public static FabEntityToken CreateFabEntityToken(this FabUser user)

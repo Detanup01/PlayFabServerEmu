@@ -32,7 +32,7 @@ internal class FabEntityToken
     public string EntityCredentials { get; set; } = string.Empty;
 
     // No idea if real name | AKA Title Acount Id
-    [JsonProperty(PropertyName = "e")]
+    [JsonProperty(PropertyName = "ei")]
     public string EntityId { get; set; } = string.Empty;
 
     // No idea if real name

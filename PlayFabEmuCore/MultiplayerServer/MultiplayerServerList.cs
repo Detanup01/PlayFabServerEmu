@@ -2,10 +2,10 @@
 using ModdableWebServer;
 using NetCoreServer;
 using Newtonsoft.Json;
-using PlayFab.ClientModels;
 using PlayFab.Internal;
 using ModdableWebServer.Helper;
 using PlayFab.MultiplayerModels;
+using PlayFab.Json;
 
 namespace PlayFabEmuCore.MultiplayerServer;
 
@@ -25,13 +25,13 @@ internal class MultiplayerServerList
                 {
                     new()
                     {
-                        ServerUrl = "192.168.3.50",
+                        ServerUrl = "127.0.0.1",
                         Region = "WestEurope"
                     }
                 }
             }
         };
-        serverStruct.Response.MakeGetResponse(JsonConvert.SerializeObject(ret));
+        serverStruct.Response.MakeGetResponse(PlayFabSimpleJson.SerializeObject(ret), "application/json");
         serverStruct.SendResponse();
         return true;
     }

@@ -10,8 +10,19 @@ public class DataBaseConnection<T> where T : new()
 
     public DataBaseConnection()
     {
-        DB = new LiteDatabase(new ConnectionString() { Connection = ConnectionType.Shared, Filename = $"{nameof(T)}.db" });
-        Collection = DB.GetCollection<T>(nameof(T));
+        DB = new LiteDatabase(new ConnectionString() { Connection = ConnectionType.Shared, Filename = $"{typeof(T).Name}.db" });
+        Collection = DB.GetCollection<T>(typeof(T).Name);
+    }
+
+    public DataBaseConnection(string db_name)
+    {
+        DB = new LiteDatabase(new ConnectionString() { Connection = ConnectionType.Shared, Filename = $"{db_name}.db" });
+        Collection = DB.GetCollection<T>(typeof(T).Name);
+    }
+    public DataBaseConnection(string db_name, string collection_name)
+    {
+        DB = new LiteDatabase(new ConnectionString() { Connection = ConnectionType.Shared, Filename = $"{db_name}.db" });
+        Collection = DB.GetCollection<T>(collection_name);
     }
 
     public virtual void Create(T user)

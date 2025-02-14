@@ -10,6 +10,7 @@ using PlayFabEmuCore.BackEnd;
 using PlayFabEmuCore.Helpers;
 using PlayFabEmuCore.Models;
 using PlayFabEmuCore.Extensions;
+using PlayFab.Json;
 
 namespace PlayFabEmuCore.Client;
 
@@ -57,6 +58,7 @@ internal class Login
     [HTTP("POST", "/Client/LoginWithSteam?{args}")]
     public static bool LoginWithSteam(HttpRequest req, ServerStruct serverStruct)
     {
+        Console.WriteLine(req.Body);
         var steam = JsonConvert.DeserializeObject<LoginWithSteamRequest>(req.Body);
         if (steam == null)
         {
@@ -70,12 +72,11 @@ internal class Login
             serverStruct.SendResponse();
             return true;
         }
-
         var ticket = AppTickets.GetTicket(Convert.FromHexString(steam.SteamTicket));
         var steam_id = ticket.SteamID.ToString();
 
         var user = DBManager.FabUser.GetOne(x=>x.TitleId == steam.TitleId && x.PlatformId == steam_id && x.PlatformType == "Steam");
-        if (user == null)
+        if (user == null || user.PlayFabId == FabId.Empty)
         {
             // if no user found create one.
             DBManager.FabUser.Create(user = new()
@@ -101,8 +102,8 @@ internal class Login
                         Id = user.TitleAccountId,
                         Type = "title_player_account"
                     },
-                    EntityToken = user.CreateEntityToken(),
-                    TokenExpiration = DateTime.Now
+                    EntityToken = user.CreateSerializedEntityToken(),
+                    TokenExpiration = DateTime.Now.AddDays(1)
                 },
                 SessionTicket = user.GenerateSessionTicket(),
                 SettingsForUser = new()
@@ -123,7 +124,8 @@ internal class Login
             code = 200,
             status = "OK"
         };
-
+        Console.WriteLine(PlayFabSimpleJson.SerializeObject(ret));
+        /*
         var error = new PlayFabError()
         {
             HttpCode = 400,
@@ -131,8 +133,9 @@ internal class Login
             ErrorMessage = "User not found",
             HttpStatus = "BadRequest",
         };
+        */
 
-        serverStruct.Response.MakeGetResponse(JsonConvert.SerializeObject(ret));
+        serverStruct.Response.MakeGetResponse(PlayFabSimpleJson.SerializeObject(ret), "application/json");
         serverStruct.SendResponse();
         return true;
     }

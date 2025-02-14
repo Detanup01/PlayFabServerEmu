@@ -1,6 +1,8 @@
 ﻿using ModdableWebServer.Helper;
 using ModdableWebServer.Servers;
 using NetCoreServer;
+using PlayFabEmuCore.UDP;
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Authentication;
@@ -13,6 +15,7 @@ public class ServerManager
 
     static HTTP_Server? HTTP;
     static HTTPS_Server? HTTPS;
+    static TestUDP? testUDP;
 
     public static void Start()
     {
@@ -24,7 +27,8 @@ public class ServerManager
             // These is required! Sadly it doesnt work with PAM but it works as PFX. (Thanks microsoft.)
             var cert = CertHelper.GetCertWithPath(ServerSettings.Instance().SSL.CertPath, ServerSettings.Instance().SSL.KeyPath);
             var new_cert = new X509Certificate2(cert.Export(X509ContentType.Pfx));
-            SslContext sslContext = new SslContext(SslProtocols.Tls12 | SslProtocols.Tls13, new_cert);
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            SslContext sslContext = new SslContext(SslProtocols.Tls12, new_cert);
             HTTPS = new(sslContext, ServerSettings.Instance().HostOn, 443);
             HTTPS.MergeAttributes(Assembly.GetAssembly(typeof(ServerManager))!);
             HTTPS.ReceivedFailed += ReceivedFailed;
@@ -65,8 +69,11 @@ public class ServerManager
             HTTP?.Stop();
         if (HTTPS != null)
             HTTPS?.Stop();
+        if (testUDP != null)
+            testUDP?.Stop();
         HTTP = null;
         HTTPS = null;
+        testUDP = null;
     }
 
 

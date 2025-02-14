@@ -8,6 +8,6 @@ internal static class DBManager
 
     static DBManager()
     {
-        FabUser = new();
+        FabUser = new("Users");
     }
 }
