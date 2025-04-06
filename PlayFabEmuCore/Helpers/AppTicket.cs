@@ -74,7 +74,7 @@ public class AppTickets
 
         public override string ToString()
         {
-            return $"\nGCToken: {GcToken}, TokenGenerated: {TokenGenerated}, InternalIP: {SessionInternalIP.ToString()}, ExternalIP: {SessionExternalIP.ToString()}, CConnectionTime: {SessionConnectionTime}, CConnectionCount: {SessionConnectionCount}, GCLen: {GCLen}";
+            return $"\nGCToken: {GcToken}, TokenGenerated: {TokenGenerated}, InternalIP: {SessionInternalIP}, ExternalIP: {SessionExternalIP}, CConnectionTime: {SessionConnectionTime}, CConnectionCount: {SessionConnectionCount}, GCLen: {GCLen}";
         }
     }
 
@@ -103,7 +103,7 @@ public class AppTickets
         public List<DlcDetails> DLC { get; set; } = [];
         public byte[] Signature { get; set; } = [];
 
-        public uint unk { get; set; }
+        public uint Unk { get; set; }
 
         public override string ToString()
         {
@@ -112,16 +112,16 @@ public class AppTickets
             {
                 gc_specific = GC.ToString();
             }
-            return $"FullLen: {FullLen}, TicketLen : {TicketLength}, OwnershipLength: {OwnershipLength}, Version: {Version}, SteamID: {SteamID.ToString()}, AppId: {AppID}, " +
-                $"OTExtIP: {OwnershipTicketExternalIP.ToString()}, " +
-                $"OTIntIP: {OwnershipTicketInternalIP.ToString()}, " +
+            return $"FullLen: {FullLen}, TicketLen : {TicketLength}, OwnershipLength: {OwnershipLength}, Version: {Version}, SteamID: {SteamID}, AppId: {AppID}, " +
+                $"OTExtIP: {OwnershipTicketExternalIP}, " +
+                $"OTIntIP: {OwnershipTicketInternalIP}, " +
                 $"OFlags: {OwnershipFlags}, " +
                 $"OWGenTime: {OwnershipTicketGenerated}, " +
                 $"OWExp: {OwnershipTicketExpires}, " +
                 $"Licenses: {string.Join(" ", this.Licenses)}," +
                 $"DLC Count: {DLC.Count}, " +
                 $"DLC's: {string.Join(" ", this.DLC)}, " +
-                $"Signature: {BitConverter.ToString(Signature).Replace("-", "")}, SigLen: {Signature.Length} unk: {unk}" + gc_specific;
+                $"Signature: {BitConverter.ToString(Signature).Replace("-", "")}, SigLen: {Signature.Length} unk: {Unk}" + gc_specific;
         }
 
         public string ToCensored()
@@ -133,7 +133,7 @@ public class AppTickets
                     $"Licenses: {string.Join(" ", this.Licenses)} " +
                     $"DLC Count: {DLC.Count}, " +
                     $"DLC's: {string.Join(" ", this.DLC)}, " +
-                    $"Signature: {BitConverter.ToString(Signature).Replace("-", "")}, SigLen: {Signature.Length} unk: {unk}";
+                    $"Signature: {BitConverter.ToString(Signature).Replace("-", "")}, SigLen: {Signature.Length} unk: {Unk}";
         }
     }
 
@@ -144,10 +144,12 @@ public class AppTickets
     /// <returns>The Ticket Structure</returns>
     public static TicketStruct GetTicket(byte[] ticket)
     {
-        TicketStruct ticketStruct = new();
-        ticketStruct.Licenses = [];
-        ticketStruct.DLC = [];
-        ticketStruct.FullLen = ticket.Length;
+        TicketStruct ticketStruct = new()
+        {
+            Licenses = [],
+            DLC = [],
+            FullLen = ticket.Length
+        };
         using var ms = new MemoryStream(ticket);
         using var ticketReader = new BinaryReader(ms, System.Text.Encoding.UTF8, true);
 
@@ -235,7 +237,7 @@ public class AppTickets
                 ticketStruct.DLC.Add(dlc);
             }
 
-            ticketStruct.unk = ticketReader.ReadUInt16();
+            ticketStruct.Unk = ticketReader.ReadUInt16();
 
             if (ms.Position + 128 == ms.Length)
             {

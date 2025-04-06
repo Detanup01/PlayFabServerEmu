@@ -5,8 +5,8 @@ namespace PlayFabEmuCore.BackEnd;
 
 public class DataBaseConnection<T> where T : new()
 {
-    LiteDatabase DB;
-    ILiteCollection<T> Collection;
+    readonly LiteDatabase DB;
+    readonly ILiteCollection<T> Collection;
 
     public DataBaseConnection()
     {
@@ -37,7 +37,7 @@ public class DataBaseConnection<T> where T : new()
 
     public virtual List<T> GetList(Expression<Func<T, bool>> predicate)
     {
-        return Collection.Find(predicate).ToList();
+        return [.. Collection.Find(predicate)];
     }
 
     public virtual T GetOne(Expression<Func<T, bool>> predicate)

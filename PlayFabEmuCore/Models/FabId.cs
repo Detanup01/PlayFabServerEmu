@@ -4,8 +4,8 @@ namespace PlayFabEmuCore.Models;
 
 public struct FabId : IEquatable<FabId>, IEqualityComparer<FabId>
 {
-    public static FabId Empty => new FabId(0);
-    public static FabId RandomId { get => new FabId(Random.Shared.NextInt64()); }    
+    public static FabId Empty => new(0);
+    public static FabId RandomId { get => new(Random.Shared.NextInt64()); }    
     public string StringId { get; private set; }
 
     [LiteDB.BsonIgnore]
@@ -32,22 +32,22 @@ public struct FabId : IEquatable<FabId>, IEqualityComparer<FabId>
         this.LongId = Convert.ToInt64(StringId, 16);
     }
 
-    public override string ToString()
+    public readonly override string ToString()
     {
         return StringId;
     }
 
-    public override int GetHashCode()
+    public readonly override int GetHashCode()
     {
         return LongId.GetHashCode();
     }
 
-    public override bool Equals(object? obj)
+    public readonly override bool Equals(object? obj)
     {
-        return obj is FabId && Equals((FabId)obj);
+        return obj is FabId id && Equals(id);
     }
 
-    public bool Equals(FabId other)
+    public readonly bool Equals(FabId other)
     {
         return other.GetHashCode() == this.GetHashCode();
     }
@@ -57,7 +57,7 @@ public struct FabId : IEquatable<FabId>, IEqualityComparer<FabId>
         return x.GetHashCode() == y.GetHashCode();
     }
 
-    public int GetHashCode([DisallowNull] FabId obj)
+    public readonly int GetHashCode([DisallowNull] FabId obj)
     {
         return obj.GetHashCode();
     }

@@ -1,13 +1,8 @@
-﻿using ModdableWebServer.Attributes;
-using ModdableWebServer.Helper;
-using ModdableWebServer;
-using NetCoreServer;
-using Newtonsoft.Json;
-using PlayFab.ClientModels;
+﻿using PlayFab.ClientModels;
 
-namespace PlayFabEmuCore.Client;
+namespace PlayFabEmuCore;
 
-internal class Trade
+internal partial class Client
 {
     [HTTP("POST", "/Client/AcceptTrade?{args}")]
     public static bool AcceptTrade(HttpRequest req, ServerStruct serverStruct)

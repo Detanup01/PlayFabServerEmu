@@ -1,33 +1,29 @@
-﻿using ModdableWebServer.Attributes;
-using ModdableWebServer.Helper;
-using ModdableWebServer;
-using NetCoreServer;
-using Newtonsoft.Json;
-using PlayFab.ClientModels;
-using PlayFab.Internal;
-using PlayFab;
+﻿using PlayFab.ClientModels;
 
-namespace PlayFabEmuCore.Client;
+namespace PlayFabEmuCore;
 
-internal class Friend
+internal partial class Client
 {
     [HTTP("POST", "/Client/AddFriend?{args}")]
     public static bool AddFriend(HttpRequest req, ServerStruct serverStruct)
     {
-        foreach (var item in serverStruct.Parameters)
+        var request = JsonConvert.DeserializeObject<AddFriendRequest>(req.Body);
+        if (serverStruct.ReturnIfNull(request))
+            return true;
+        return serverStruct.SendSuccess<AddFriendResult>(new()
         {
-            Console.WriteLine(item.Key + " " + item.Value);
-        }
-        _ = JsonConvert.DeserializeObject<AddFriendRequest>(req.Body);
+        });
+    }
 
-        var ret = new PlayFabJsonSuccess<AddFriendResult>()
-        { 
-            
-        
-        };
-
-        serverStruct.Response.MakeOkResponse(204);
-        serverStruct.SendResponse();
-        return true;
+    [HTTP("POST", "/Client/GetFriendsList?{args}")]
+    public static bool GetFriendsList(HttpRequest req, ServerStruct serverStruct)
+    {
+        var request = JsonConvert.DeserializeObject<GetFriendsListRequest>(req.Body);
+        if (serverStruct.ReturnIfNull(request))
+            return true;
+        return serverStruct.SendSuccess<GetFriendsListResult>(new()
+        {
+            Friends = []
+        });
     }
 }

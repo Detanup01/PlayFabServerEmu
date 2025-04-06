@@ -28,7 +28,7 @@ public class ServerManager
             var cert = CertHelper.GetCertWithPath(ServerSettings.Instance().SSL.CertPath, ServerSettings.Instance().SSL.KeyPath);
             var new_cert = new X509Certificate2(cert.Export(X509ContentType.Pfx));
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            SslContext sslContext = new SslContext(SslProtocols.Tls12, new_cert);
+            SslContext sslContext = new(SslProtocols.Tls12, new_cert);
             HTTPS = new(sslContext, ServerSettings.Instance().HostOn, 443);
             HTTPS.MergeAttributes(Assembly.GetAssembly(typeof(ServerManager))!);
             HTTPS.ReceivedFailed += ReceivedFailed;
@@ -45,6 +45,7 @@ public class ServerManager
             HTTP.ReceivedRequestError += RecvError;
             HTTP.Start();
         }
+        testUDP = new(6666);
     }
 
     private static void RecvError(object? sender, (HttpRequest request, string error) e)

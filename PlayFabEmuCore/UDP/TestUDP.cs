@@ -1,16 +1,9 @@
-﻿using NetCoreServer;
-using System;
-using System.Net;
+﻿using System.Net;
 
 namespace PlayFabEmuCore.UDP;
 
-internal class TestUDP : UdpServer
+internal class TestUDP(int port) : UdpServer(IPAddress.Any, port)
 {
-    public TestUDP(int port) : base(IPAddress.Any, port)
-    {
-
-    }
-
     protected override void OnStarted()
     {
         ReceiveAsync();
@@ -20,7 +13,7 @@ internal class TestUDP : UdpServer
     {
         var buff = buffer.Skip((int)offset).Take((int)size).ToArray();
         var str = BitConverter.ToString(buff).Replace("-", string.Empty);
-        Console.WriteLine($"UDP received: from {endpoint.ToString()} str: {str}");
+        Console.WriteLine($"UDP received: from {endpoint} str: {str}");
         Send(endpoint, buff);
         ReceiveAsync();
     }

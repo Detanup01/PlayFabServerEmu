@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿namespace PlayFabEmuCore.Models;
 
-namespace PlayFabEmuCore.Models;
-
-internal class FabEntityToken
+public class FabEntityToken
 {
     [JsonProperty(PropertyName = "i")]
     public string CreatedAt { get; set; } = string.Empty;

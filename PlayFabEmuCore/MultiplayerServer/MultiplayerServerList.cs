@@ -1,38 +1,23 @@
-﻿using ModdableWebServer.Attributes;
-using ModdableWebServer;
-using NetCoreServer;
-using Newtonsoft.Json;
-using PlayFab.Internal;
-using ModdableWebServer.Helper;
-using PlayFab.MultiplayerModels;
-using PlayFab.Json;
+﻿using PlayFab.MultiplayerModels;
 
 namespace PlayFabEmuCore.MultiplayerServer;
 
-internal class MultiplayerServerList
+internal partial class MultiplayerServer
 {
     [HTTP("POST", "/MultiplayerServer/ListPartyQosServers?{args}")]
-    public static bool ListPartyQosServers(HttpRequest req, ServerStruct serverStruct)
+    public static bool ListPartyQosServers(HttpRequest _, ServerStruct serverStruct)
     {
-        var ret = new PlayFabJsonSuccess<ListPartyQosServersResponse>()
+        return serverStruct.SendSuccess<ListPartyQosServersResponse>(new()
         {
-            code = 200,
-            status = "OK",
-            data = new()
-            {
-                PageSize = 1,
-                QosServers = new()
+            PageSize = 1,
+            QosServers =
+            [
+                new()
                 {
-                    new()
-                    {
-                        ServerUrl = "127.0.0.1",
-                        Region = "WestEurope"
-                    }
+                    ServerUrl = "127.0.0.1:6666",
+                    Region = "WestEurope"
                 }
-            }
-        };
-        serverStruct.Response.MakeGetResponse(PlayFabSimpleJson.SerializeObject(ret), "application/json");
-        serverStruct.SendResponse();
-        return true;
+            ]
+        });
     }
 }

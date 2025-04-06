@@ -1,4 +1,6 @@
-﻿namespace PlayFabEmuCore.Models;
+﻿using PlayFab.ClientModels;
+
+namespace PlayFabEmuCore.Models;
 
 public class FabUser
 {
@@ -11,4 +13,7 @@ public class FabUser
     public FabId RandomId { get; set; } = FabId.Empty;
     public string PlatformId { get; set; } = string.Empty;
     public string PlatformType { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
+    public Dictionary<string, UserDataRecord> CustomData { get; set; } = [];
+    public uint DataVersion { get; set; } = 0;
 }
