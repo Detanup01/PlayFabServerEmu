@@ -1,5 +1,4 @@
 ﻿using PlayFab.ClientModels;
-
 using PlayFabEmuCore.BackEnd;
 
 namespace PlayFabEmuCore;
