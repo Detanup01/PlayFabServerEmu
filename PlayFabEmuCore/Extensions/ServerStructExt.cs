@@ -7,12 +7,20 @@ namespace PlayFabEmuCore.Extensions;
 
 public static class ServerStructExt
 {
-
     public static string GetEntityToken(this ServerStruct serverStruct)
     {
-        if (!serverStruct.Headers.TryGetValue("x-entitytoken", out string? value))
-            return string.Empty;
-        return value;
+        string? value = null;
+        if (serverStruct.Headers.ContainsKey("x-entitytoken"))
+        {
+            if (serverStruct.Headers.TryGetValue("x-entitytoken", out value))
+                return string.Empty;
+        }
+        if (serverStruct.Headers.ContainsKey("x-authorization"))
+        {
+            if (serverStruct.Headers.TryGetValue("x-authorization", out value))
+                return string.Empty;
+        }
+        return value ?? string.Empty;
     }
 
     public static bool ReturnIfNull<T>(this ServerStruct serverStruct, [NotNullWhen(false)] T? typeObject)

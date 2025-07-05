@@ -14,6 +14,8 @@ public class FabUser
     public string PlatformId { get; set; } = string.Empty;
     public string PlatformType { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public Dictionary<string, UserDataRecord> CustomData { get; set; } = [];
     public uint DataVersion { get; set; } = 0;
+    public Dictionary<string, int> VirtualCurrency { get; set; } = [];
 }

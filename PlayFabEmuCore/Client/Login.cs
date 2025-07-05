@@ -81,7 +81,7 @@ internal partial class Client
             HttpStatus = "BadRequest",
         };
         */
-        return serverStruct.SendSuccess<LoginResult>(new()
+        LoginResult loginResult = new()
         {
             EntityToken = new()
             {
@@ -107,7 +107,77 @@ internal partial class Client
                 Variants = [],
             },
             NewlyCreated = false,
-            PlayFabId = user.PlayFabId
-        });
+            PlayFabId = user.PlayFabId,
+            InfoResultPayload = new()
+        };
+        if (steam.InfoRequestParameters.GetUserAccountInfo)
+        {
+            loginResult.InfoResultPayload.AccountInfo = new()
+            { 
+                PlayFabId = user.PlayFabId,
+                Created = user.CreatedAt,
+                PrivateInfo = new(),
+                TitleInfo = new()
+                { 
+                    isBanned = false,
+                    DisplayName = user.DisplayName,
+                    Created = user.CreatedAt,
+                    FirstLogin = user.CreatedAt,
+                    LastLogin = DateTime.UtcNow,
+                    Origination = UserOrigination.Steam,
+                    TitlePlayerAccount = new()
+                    { 
+                        Id = user.TitleAccountId,
+                        Type = "title_player_account",
+                    },
+                },
+                SteamInfo = new()
+                { 
+                    SteamActivationStatus = TitleActivationStatus.ActivatedSteam,
+                    SteamCountry = "US",
+                    SteamCurrency  = Currency.USD,
+                    SteamId = steam_id,
+                    SteamName = user.DisplayName
+                },
+                Username = user.DisplayName,
+            };
+        }
+        if (steam.InfoRequestParameters.GetUserData)
+        {
+            loginResult.InfoResultPayload.UserData = user.CustomData;
+            loginResult.InfoResultPayload.UserDataVersion = user.DataVersion;
+        }
+
+        if (steam.InfoRequestParameters.GetPlayerProfile)
+        {
+            loginResult.InfoResultPayload.PlayerProfile = new()
+            { 
+                PublisherId = user.GameId,
+                TitleId = user.TitleId,
+                PlayerId = user.PlayFabId,
+            };
+        }
+
+        if (steam.InfoRequestParameters.GetTitleData)
+        {
+            var title = DBManager.FabTitle.GetOne(x=> x.TitleId == steam.TitleId);
+            if (title == null)
+            {
+                title = new()
+                { 
+                    TitleId = steam.TitleId,
+                    TitleData = [],
+                };
+                DBManager.FabTitle.Create(title);
+            }
+            loginResult.InfoResultPayload.TitleData = title.TitleData;
+        }
+
+        if (steam.InfoRequestParameters.GetUserVirtualCurrency)
+        {
+            loginResult.InfoResultPayload.UserVirtualCurrency = user.VirtualCurrency;
+        }
+
+        return serverStruct.SendSuccess(loginResult);
     }
 }
