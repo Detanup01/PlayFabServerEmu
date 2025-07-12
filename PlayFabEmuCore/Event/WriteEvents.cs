@@ -6,13 +6,8 @@ namespace PlayFabEmuCore;
 internal partial class Event
 {
     [HTTP("POST", "/Event/WriteEvents")]
-    public static bool WriteEvents(HttpRequest req, ServerStruct serverStruct)
-    {
-        return WriteEventsArgs(req, serverStruct);
-    }
-
     [HTTP("POST", "/Event/WriteEvents?{args}")]
-    public static bool WriteEventsArgs(HttpRequest req, ServerStruct serverStruct)
+    public static bool WriteEvents(HttpRequest req, ServerStruct serverStruct)
     {
         var request = JsonConvert.DeserializeObject<WriteEventsRequest>(req.Body);
         if (serverStruct.ReturnIfNull(request))

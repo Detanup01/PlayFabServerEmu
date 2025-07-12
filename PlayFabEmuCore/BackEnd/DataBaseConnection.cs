@@ -40,7 +40,7 @@ public class DataBaseConnection<T> where T : new()
         return [.. Collection.Find(predicate)];
     }
 
-    public virtual T GetOne(Expression<Func<T, bool>> predicate)
+    public virtual T? GetOne(Expression<Func<T, bool>> predicate)
     {
         return Collection.FindOne(predicate);
     }

@@ -50,6 +50,18 @@ public static class ServerStructExt
         return true;
     }
 
+    public static bool SendSuccess<T>(this ServerStruct serverStruct) where T : PlayFabResultCommon, new()
+    {
+        serverStruct.Response.MakeGetResponse(PlayFabSimpleJson.SerializeObject(new PlayFabJsonSuccess<T>()
+        {
+            code = 200,
+            status = "OK",
+            data = new()
+        }), "application/json");
+        serverStruct.SendResponse();
+        return true;
+    }
+
     public static bool SendError(this ServerStruct serverStruct, PlayFabError error)
     {
         serverStruct.Response.MakeGetResponse(PlayFabSimpleJson.SerializeObject(error), "application/json");
