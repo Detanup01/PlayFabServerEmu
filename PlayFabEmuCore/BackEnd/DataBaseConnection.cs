@@ -30,8 +30,10 @@ public class DataBaseConnection<T> where T : new()
         Collection.Insert(user);
     }
 
-    public virtual void Update(T user)
+    public virtual void Update(T? user)
     {
+        if (user == null)
+            return;
         Collection.Upsert(user);
     }
 
@@ -43,6 +45,11 @@ public class DataBaseConnection<T> where T : new()
     public virtual T? GetOne(Expression<Func<T, bool>> predicate)
     {
         return Collection.FindOne(predicate);
+    }
+
+    public virtual void Delete(Expression<Func<T, bool>> predicate)
+    {
+        Collection.DeleteMany(predicate);
     }
 
     public virtual void Close()

@@ -11,11 +11,12 @@ internal partial class Lobby
         var request = JsonConvert.DeserializeObject<GetLobbyRequest>(req.Body);
         if (serverStruct.ReturnIfNull(request))
             return true;
-        var token = serverStruct.GetEntityToken().GetFabEntityToken();
+        var token = serverStruct.GetSessionInfoFromServer();
         if (serverStruct.ReturnIfNull(token))
             return true;;
         var fabLobby = DBManager.FabLobby.GetOne(x=>x.Lobby.LobbyId == request.LobbyId);
-
+        if (serverStruct.ReturnIfNull(fabLobby))
+            return true; ;
         return serverStruct.SendSuccess<GetLobbyResult>(new()
         {
             Lobby = fabLobby.Lobby,

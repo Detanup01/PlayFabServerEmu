@@ -11,7 +11,7 @@ internal partial class Lobby
         var request = JsonConvert.DeserializeObject<FindLobbiesRequest>(req.Body);
         if (serverStruct.ReturnIfNull(request))
             return true;
-        var token = serverStruct.GetEntityToken().GetFabEntityToken();
+        var token = serverStruct.GetSessionInfoFromServer();
         if (serverStruct.ReturnIfNull(token))
             return true;
         Console.WriteLine("Filter for Lobby: " + request.Filter);
@@ -32,7 +32,7 @@ internal partial class Lobby
         var request = JsonConvert.DeserializeObject<FindFriendLobbiesRequest>(req.Body);
         if (serverStruct.ReturnIfNull(request))
             return true;
-        var token = serverStruct.GetEntityToken().GetFabEntityToken();
+        var token = serverStruct.GetSessionInfoFromServer();
         if (serverStruct.ReturnIfNull(token))
             return true;
         Console.WriteLine("Filter for Lobby: " + request.Filter);

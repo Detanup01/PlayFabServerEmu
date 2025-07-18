@@ -10,7 +10,7 @@ internal partial class Client
         var request = JsonConvert.DeserializeObject<GetPlayFabIDsFromSteamIDsRequest>(req.Body);
         if (serverStruct.ReturnIfNull(request))
             return true;
-        var token = serverStruct.GetEntityToken().GetFabEntityToken();
+        var token = serverStruct.GetSessionInfoFromServer();
         if (serverStruct.ReturnIfNull(token))
             return true;
         if (request.SteamStringIDs.Count == 0)

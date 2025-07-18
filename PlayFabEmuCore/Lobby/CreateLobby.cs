@@ -11,7 +11,7 @@ internal partial class Lobby
         var request = JsonConvert.DeserializeObject<CreateLobbyRequest>(req.Body);
         if (serverStruct.ReturnIfNull(request))
             return true;
-        var token = serverStruct.GetEntityToken().GetFabEntityToken();
+        var token = serverStruct.GetSessionInfoFromServer();
         if (serverStruct.ReturnIfNull(token))
             return true;
         string LobbyId = Guid.NewGuid().ToString();

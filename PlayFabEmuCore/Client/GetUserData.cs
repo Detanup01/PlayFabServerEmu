@@ -12,10 +12,12 @@ internal partial class Client
         var request = JsonConvert.DeserializeObject<GetUserDataRequest>(req.Body);
         if (serverStruct.ReturnIfNull(request))
             return true;
-        var token = serverStruct.GetEntityToken().GetFabEntityToken();
+        var token = serverStruct.GetSessionInfoFromServer();
         if (serverStruct.ReturnIfNull(token))
             return true;
-        var fabUser = DBManager.FabUser.GetOne(x => x.TitleAccountId == token.EntityId);
+        var fabUser = DBManager.FabUser.GetOne(x => x.TitleAccountId == token.Value.TitleAccountId && x.TitleId == token.Value.TitleId);
+        if (serverStruct.ReturnIfNull(fabUser))
+            return true;
         DBManager.FabUser.Update(fabUser);
         Dictionary<string, UserDataRecord> Data = [];
         foreach (var item in fabUser.CustomData)

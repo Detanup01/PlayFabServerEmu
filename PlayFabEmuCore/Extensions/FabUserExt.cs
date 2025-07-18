@@ -6,6 +6,18 @@ namespace PlayFabEmuCore.Extensions;
 
 internal static class FabUserExt
 {
+    public static (FabId PlayFabId, FabId GameId, FabId TitleAccountId, string TitleId) GetSessionInfo(string sessionTicket)
+    {
+        FabId fabId = FabId.Empty;
+        FabId gameId = FabId.Empty;
+        FabId titleAccountId = FabId.Empty;
+        string titleId = string.Empty;
+        string randomid = string.Empty;
+        string somehash = string.Empty;
+        InterpolatedParsing.InterpolatedParser.Parse(sessionTicket, $"{fabId}-{gameId}-{titleAccountId}-{titleId}-{randomid}-{somehash}");
+        return (fabId, gameId, titleAccountId, titleId);
+    }
+
     public static string GenerateSessionTicket(this FabUser user)
     {
         return $"{user.PlayFabId}-{user.GameId}-{user.TitleAccountId}-{user.TitleId}-{user.RandomId}-{Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))}";

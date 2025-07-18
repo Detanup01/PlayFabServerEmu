@@ -1,26 +1,43 @@
 ﻿using PlayFab;
 using PlayFab.Internal;
 using PlayFab.Json;
+using PlayFabEmuCore.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PlayFabEmuCore.Extensions;
 
 public static class ServerStructExt
 {
-    public static string GetEntityToken(this ServerStruct serverStruct)
+    public static (FabId PlayFabId, FabId GameId, FabId TitleAccountId, string TitleId)? GetSessionInfoFromServer(this ServerStruct serverStruct)
     {
-        string? value = null;
-        if (serverStruct.Headers.ContainsKey("x-entitytoken"))
-        {
-            if (serverStruct.Headers.TryGetValue("x-entitytoken", out value))
-                return string.Empty;
-        }
-        if (serverStruct.Headers.ContainsKey("x-authorization"))
-        {
-            if (serverStruct.Headers.TryGetValue("x-authorization", out value))
-                return string.Empty;
-        }
-        return value ?? string.Empty;
+        string cred = string.Empty;
+        var ftoken = GetPlayFabToken(serverStruct);
+        if (ftoken != null)
+            cred = ftoken.EntityCredentials.Replace("title_player_account!", string.Empty);
+        var etoken = GetEntityToken(serverStruct);
+        if (etoken != null)
+            cred = etoken;
+        if (string.IsNullOrEmpty(cred))
+            return null;
+        return FabUserExt.GetSessionInfo(cred);
+    }
+
+    public static FabEntityToken? GetPlayFabToken(this ServerStruct serverStruct)
+    {
+        if (!serverStruct.Headers.TryGetValue("x-authorization", out string? auth))
+            return null;
+        if (string.IsNullOrEmpty(auth))
+            return null;
+        return auth.GetFabEntityToken();
+    }
+
+    public static string? GetEntityToken(this ServerStruct serverStruct)
+    {
+        if (!serverStruct.Headers.TryGetValue("x-entitytoken", out string? entitytoken))
+            return null;
+        if (string.IsNullOrEmpty(entitytoken))
+            return null;
+        return entitytoken;
     }
 
     public static bool ReturnIfNull<T>(this ServerStruct serverStruct, [NotNullWhen(false)] T? typeObject)
