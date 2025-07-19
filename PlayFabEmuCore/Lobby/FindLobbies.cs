@@ -6,6 +6,7 @@ namespace PlayFabEmuCore;
 internal partial class Lobby
 {
     [HTTP("POST", "/Lobby/FindLobbies")]
+    [HTTP("POST", "/Lobby/FindLobbies?{args}")]
     public static bool FindLobbies(HttpRequest req, ServerStruct serverStruct)
     {
         var request = JsonConvert.DeserializeObject<FindLobbiesRequest>(req.Body);
@@ -27,6 +28,7 @@ internal partial class Lobby
     }
 
     [HTTP("POST", "/Lobby/FindFriendLobbies")]
+    [HTTP("POST", "/Lobby/FindFriendLobbies?{args}")]
     public static bool FindFriendLobbies(HttpRequest req, ServerStruct serverStruct)
     {
         var request = JsonConvert.DeserializeObject<FindFriendLobbiesRequest>(req.Body);

@@ -6,6 +6,7 @@ namespace PlayFabEmuCore;
 internal partial class Lobby
 {
     [HTTP("POST", "/Lobby/CreateLobby")]
+    [HTTP("POST", "/Lobby/CreateLobby?{args}")]
     public static bool CreateLobby(HttpRequest req, ServerStruct serverStruct)
     {
         var request = JsonConvert.DeserializeObject<CreateLobbyRequest>(req.Body);
