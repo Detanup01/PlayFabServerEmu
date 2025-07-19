@@ -21,7 +21,7 @@ public class FabGroup
     public Dictionary<string, string> Roles { get; set; } = [];
 
     public Dictionary<FabId, string> MembersAndRoles { get; set; } = [];
-    public Dictionary<FabId, DateTimeOffset> Applications { get; set; } = [];
+    public Dictionary<FabId, DateTime> Applications { get; set; } = [];
     public Dictionary<FabId, string> Invitations { get; set; } = [];
     public List<FabId> Blocked { get; set; } = [];
     public string AdminId { get; set; } = "admins";
